@@ -46,3 +46,19 @@ target_link_libraries( # Specifies the target library.
                        # Links the target library to the log library
                        # included in the NDK.
                        ${log-lib} )
+
+# add spdlog
+add_definitions(-DSPDLOG_COMPILED_LIB)
+add_library(spdlog STATIC IMPORTED)
+set_target_properties(
+        spdlog PROPERTIES IMPORTED_LOCATION /Users/longlom/Projects/rpo22/libs/spdlog/build/armeabi-v7a/libspdlog.a
+)
+
+target_include_directories(
+        native-lib PUBLIC
+        ~/Projects/rpo22/libs/spdlog/spdlog/include
+)
+target_link_libraries(
+        native-lib
+        spdlog
+)
