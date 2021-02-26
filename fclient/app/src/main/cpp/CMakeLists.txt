@@ -51,14 +51,26 @@ target_link_libraries( # Specifies the target library.
 add_definitions(-DSPDLOG_COMPILED_LIB)
 add_library(spdlog STATIC IMPORTED)
 set_target_properties(
-        spdlog PROPERTIES IMPORTED_LOCATION /Users/longlom/Projects/rpo22/libs/spdlog/build/armeabi-v7a/libspdlog.a
+        spdlog PROPERTIES IMPORTED_LOCATION /Users/longlom/Projects/rpo22/libs/spdlog/build/x86/libspdlog.a
 )
 
 target_include_directories(
         native-lib PUBLIC
         ~/Projects/rpo22/libs/spdlog/spdlog/include
+        ~/Projects/rpo22/libs/mbedtls/mbedtls/include
 )
+
+add_library(mbedcrypto SHARED IMPORTED)
+set_target_properties(mbedcrypto PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/../cmakeLibs/${ANDROID_ABI}/libmbedcrypto.so)
+
+configure_file(
+        /Users/longlom/Projects/rpo22/libs/mbedtls/build/${ANDROID_ABI}/library/libmbedcrypto.so
+        ${CMAKE_CURRENT_SOURCE_DIR}/../cmakeLibs/${ANDROID_ABI}/libmbedcrypto.so
+        COPYONLY
+)
+
 target_link_libraries(
         native-lib
         spdlog
+        mbedcrypto
 )
