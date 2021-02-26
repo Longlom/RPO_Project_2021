@@ -1,0 +1,73 @@
+Performing C++ SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /Users/longlom/Projects/rpo22/libs/spdlog/build/x86/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/local/bin/gmake cmTC_58b64/fast && /usr/local/bin/gmake  -f CMakeFiles/cmTC_58b64.dir/build.make CMakeFiles/cmTC_58b64.dir/build
+gmake[1]: Entering directory '/Users/longlom/Projects/rpo22/libs/spdlog/build/x86/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_58b64.dir/src.cxx.o
+/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android16 --gcc-toolchain=/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DCMAKE_HAVE_LIBC_PTHREAD  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -DSPDLOG_COMPILED_LIBS  -fPIE -std=c++11 -o CMakeFiles/cmTC_58b64.dir/src.cxx.o -c /Users/longlom/Projects/rpo22/libs/spdlog/build/x86/CMakeFiles/CMakeTmp/src.cxx
+/Users/longlom/Projects/rpo22/libs/spdlog/build/x86/CMakeFiles/CMakeTmp/src.cxx:13:3: error: use of undeclared identifier 'pthread_cancel'
+  pthread_cancel(thread);
+  ^
+1 error generated.
+gmake[1]: *** [CMakeFiles/cmTC_58b64.dir/build.make:85: CMakeFiles/cmTC_58b64.dir/src.cxx.o] Error 1
+gmake[1]: Leaving directory '/Users/longlom/Projects/rpo22/libs/spdlog/build/x86/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:140: cmTC_58b64/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+static void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /Users/longlom/Projects/rpo22/libs/spdlog/build/x86/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/local/bin/gmake cmTC_d44f1/fast && /usr/local/bin/gmake  -f CMakeFiles/cmTC_d44f1.dir/build.make CMakeFiles/cmTC_d44f1.dir/build
+gmake[1]: Entering directory '/Users/longlom/Projects/rpo22/libs/spdlog/build/x86/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_d44f1.dir/CheckFunctionExists.cxx.o
+/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android16 --gcc-toolchain=/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot   -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -DSPDLOG_COMPILED_LIBS -DCHECK_FUNCTION_EXISTS=pthread_create -fPIE -std=c++11 -o CMakeFiles/cmTC_d44f1.dir/CheckFunctionExists.cxx.o -c /Users/longlom/Projects/rpo22/libs/spdlog/build/x86/CMakeFiles/CheckLibraryExists/CheckFunctionExists.cxx
+Linking CXX executable cmTC_d44f1
+/usr/local/Cellar/cmake/3.19.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d44f1.dir/link.txt --verbose=1
+/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android16 --gcc-toolchain=/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -DSPDLOG_COMPILED_LIBS -DCHECK_FUNCTION_EXISTS=pthread_create -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libatomic.a -static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments -Wl,--gc-sections   CMakeFiles/cmTC_d44f1.dir/CheckFunctionExists.cxx.o -o cmTC_d44f1  -lpthreads -latomic -lm 
+ld: error: unable to find library -lpthreads
+clang++: error: linker command failed with exit code 1 (use -v to see invocation)
+gmake[1]: *** [CMakeFiles/cmTC_d44f1.dir/build.make:106: cmTC_d44f1] Error 1
+gmake[1]: Leaving directory '/Users/longlom/Projects/rpo22/libs/spdlog/build/x86/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:140: cmTC_d44f1/fast] Error 2
+
+
+
+Determining if the function pthread_create exists in the pthread failed with the following output:
+Change Dir: /Users/longlom/Projects/rpo22/libs/spdlog/build/x86/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/local/bin/gmake cmTC_5d3d8/fast && /usr/local/bin/gmake  -f CMakeFiles/cmTC_5d3d8.dir/build.make CMakeFiles/cmTC_5d3d8.dir/build
+gmake[1]: Entering directory '/Users/longlom/Projects/rpo22/libs/spdlog/build/x86/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_5d3d8.dir/CheckFunctionExists.cxx.o
+/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android16 --gcc-toolchain=/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot   -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -DSPDLOG_COMPILED_LIBS -DCHECK_FUNCTION_EXISTS=pthread_create -fPIE -std=c++11 -o CMakeFiles/cmTC_5d3d8.dir/CheckFunctionExists.cxx.o -c /Users/longlom/Projects/rpo22/libs/spdlog/build/x86/CMakeFiles/CheckLibraryExists/CheckFunctionExists.cxx
+Linking CXX executable cmTC_5d3d8
+/usr/local/Cellar/cmake/3.19.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5d3d8.dir/link.txt --verbose=1
+/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android16 --gcc-toolchain=/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/longlom/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -DSPDLOG_COMPILED_LIBS -DCHECK_FUNCTION_EXISTS=pthread_create -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libatomic.a -static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments -Wl,--gc-sections   CMakeFiles/cmTC_5d3d8.dir/CheckFunctionExists.cxx.o -o cmTC_5d3d8  -lpthread -latomic -lm 
+ld: error: unable to find library -lpthread
+clang++: error: linker command failed with exit code 1 (use -v to see invocation)
+gmake[1]: *** [CMakeFiles/cmTC_5d3d8.dir/build.make:106: cmTC_5d3d8] Error 1
+gmake[1]: Leaving directory '/Users/longlom/Projects/rpo22/libs/spdlog/build/x86/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:140: cmTC_5d3d8/fast] Error 2
+
+
+
