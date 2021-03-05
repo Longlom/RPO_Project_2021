@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import java.nio.charset.StandardCharsets;
+
 public class MainActivity extends AppCompatActivity {
 
     // Used to load the 'native-lib' library on application startup.
@@ -20,6 +22,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         byte[] rnd = randomBytes(16);
+        byte[] data = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+        byte[] encrypted = encrypt(rnd, data);
+        byte[] decrypted = decrypt(rnd, encrypted);
+        String originalData = new String(data, StandardCharsets.UTF_8);
+        String encryptedData = new String(encrypted, StandardCharsets.UTF_8);
+        String decryptedData = new String(decrypted, StandardCharsets.UTF_8);
 
         // Example of a call to a native method
         TextView tv = findViewById(R.id.sample_text);
@@ -33,4 +41,6 @@ public class MainActivity extends AppCompatActivity {
     public native String stringFromJNI();
     public static native int initRng();
     public static native byte[] randomBytes(int no);
+    public static native byte[] encrypt(byte[] key, byte[] data);
+    public static native byte[] decrypt(byte[] key, byte[] data);
 }
