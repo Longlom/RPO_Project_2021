@@ -31,7 +31,7 @@ public class PinpadActivity extends Activity {
         });
 
         findViewById(R.id.btnKey1).setOnClickListener((View v) -> {
-           keyClick(v);
+            keyClick(v);
         });
         findViewById(R.id.btnKey2).setOnClickListener((View v) -> {
             keyClick(v);
@@ -62,10 +62,10 @@ public class PinpadActivity extends Activity {
         });
     }
 
-    protected void keyClick(View v){
-        String key = ((TextView)v).getText().toString();
+    protected void keyClick(View v) {
+        String key = ((TextView) v).getText().toString();
         int sz = pin.length();
-        if (sz < 4){
+        if (sz < 4) {
             pin += key;
             tvPin.setText("****".substring(3 - sz));
         }
@@ -95,6 +95,7 @@ public class PinpadActivity extends Activity {
             keys[i].setText(txt);
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0) {
