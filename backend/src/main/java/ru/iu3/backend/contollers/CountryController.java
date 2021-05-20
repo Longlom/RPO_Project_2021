@@ -3,6 +3,9 @@ package ru.iu3.backend.contollers;
 //import org.junit.jupiter.params.shadow.com.univocity.parsers.common.DataValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,23 +28,15 @@ public class CountryController {
         CountryRepository countryRepository;
 
         @GetMapping("/countries")
-        public List<Country> getAllCountries() {
+        public Page<Country> getAllCountries(@RequestParam("page") int page, @RequestParam("limit") int limit) {
+                return countryRepository.findAll(PageRequest.of(page,limit, Sort.by(Sort.Direction.ASC, "name")));
+        }
+
+        @GetMapping("/countries/all")
+        public List<Country> getAllCountriesAll() {
                 return countryRepository.findAll();
         }
 
-//        @PostMapping("/countries")
-//        public ResponseEntity<Object> createCountry(@Validated @RequestBody Country country) throws DataValidationException{
-//                try {
-//                        Country nc = countryRepository.save(country);
-//                        return new ResponseEntity<Object>(nc, HttpStatus.OK);
-//                } catch (Exception ex) {
-//                        String error;
-//                        if (ex.getMessage().contains("countries.name_UNIQUE"))
-//                              throw new DataValidationException("country already exists");
-//                        else
-//                                 throw new DataValidationException("undefined error");
-//                }
-//        }
 
         @PostMapping("/countries")
         public ResponseEntity<Object> createCountry(@Validated @RequestBody Country country) {
@@ -51,7 +46,7 @@ public class CountryController {
                 } catch (Exception ex) {
                         String error;
                         if (ex.getMessage().contains("countries.name_UNIQUE"))
-                                error = "country already exists";
+                                error = "countryalreadyexists";
                         else
                                 error = "undefined error";
                         Map<String, String> map = new HashMap<>();
