@@ -123,7 +123,7 @@ class PaginationComponent extends Component {
 
         return (
             <Fragment>
-                <nav aria-label="Countries Pagination" style={{outline: '1px solid green'}}>
+                <nav aria-label="Countries Pagination" style={{outline: '1px solid white'}}>
                     <ul className="pagination">
                         { pages.map((page, index) => {
                             if (page === LEFT_PAGE) return (

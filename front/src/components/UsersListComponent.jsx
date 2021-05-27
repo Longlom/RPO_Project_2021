@@ -5,13 +5,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Alert from "./Alert";
 import PaginationComponent from "./PaginationComponent";
 
-class ArtistListComponent extends React.Component {
+class UsersListComponent extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             message: undefined,
-            artists: [],
-            selected_artists: [],
+            users: [],
+            selected_users: [],
             show_alert: false,
             checkedItems: [],
             hidden: false,
@@ -20,24 +20,24 @@ class ArtistListComponent extends React.Component {
             totalCount: 0,
         }
 
-        this.refreshArtists = this.refreshArtists.bind(this)
-        this.updateArtistClicked = this.updateArtistClicked.bind(this)
-        this.addArtistClicked = this.addArtistClicked.bind(this)
+        this.refreshUsers = this.refreshUsers.bind(this)
+        this.updateUserClicked = this.updateUserClicked.bind(this)
+        this.addUserClicked = this.addUserClicked.bind(this)
         this.onDelete = this.onDelete.bind(this)
         this.closeAlert = this.closeAlert.bind(this)
         this.handleCheckChange = this.handleCheckChange.bind(this)
         this.handleGroupCheckChange = this.handleGroupCheckChange.bind(this)
         this.setChecked = this.setChecked.bind(this)
-        this.deleteArtistsClicked = this.deleteArtistsClicked.bind(this)
+        this.deleteUsersClicked = this.deleteUsersClicked.bind(this)
         this.onPageChanged = this.onPageChanged.bind(this)
     }
 
     onPageChanged(cp) {
-        this.refreshArtists( cp - 1 );
+        this.refreshUsers( cp - 1 );
     }
 
     setChecked(v) {
-        let checkedCopy = Array(this.state.artists.length).fill(v);
+        let checkedCopy = Array(this.state.users.length).fill(v);
         this.setState({checkedItems: checkedCopy});
     }
 
@@ -55,9 +55,9 @@ class ArtistListComponent extends React.Component {
         this.setChecked(isChecked);
     }
 
-    deleteArtistsClicked() {
+    deleteUsersClicked() {
         let x = [];
-        this.state.artists.map((t, idx) => {
+        this.state.users.map((t, idx) => {
             if (this.state.checkedItems[idx]) {
                 x.push(t)
             }
@@ -66,17 +66,17 @@ class ArtistListComponent extends React.Component {
         if (x.length > 0) {
             let msg;
             if (x.length > 1) {
-                msg = "Пожалуйста подтвердите удаление " + x.length + "художников";
+                msg = "Пожалуйста подтвердите удаление " + x.length + "пользователей";
             } else {
-                msg = "Пожалуйста подтвердите удаление художника " + x[0].name;
+                msg = "Пожалуйста подтвердите удаление пользователя " + x[0].name;
             }
-            this.setState({show_alert: true, selected_artists: x, message: msg});
+            this.setState({show_alert: true, selected_users: x, message: msg});
         }
     }
 
     onDelete() {
-        BackendService.deleteArtists(this.state.selected_artists)
-            .then(() => this.refreshArtists(this.state.page))
+        BackendService.deleteUsers(this.state.selected_countries)
+            .then(() => this.refreshUsers(this.state.page))
             .catch(() => {
             });
     }
@@ -85,12 +85,13 @@ class ArtistListComponent extends React.Component {
         this.setState({show_alert: false})
     }
 
-    refreshArtists(cp) {
-        BackendService.retrieveAllArtists(cp, this.state.limit)
+    refreshUsers(cp) {
+        console.log('cp', this.state.page);
+        BackendService.retrieveAllUsers(cp, this.state.limit)
             .then(resp => {
+                console.log('RESP', resp);
                 this.setState({
-                        artists: resp.data.content, totalCount: resp.data.totalElements,
-                        page:cp, hidden: false });
+                        users: resp.data, hidden: false });
             })
             .catch(() => {
                 this.setState({totalCount:0, hidden: true})
@@ -99,15 +100,15 @@ class ArtistListComponent extends React.Component {
     }
 
     componentDidMount() {
-        this.refreshArtists(0);
+        this.refreshUsers(0);
     }
 
-    updateArtistClicked(id) {
-        this.props.history.push(`/artists/${id}`)
+    updateUserClicked(id) {
+        this.props.history.push(`/users/${id}`)
     }
 
-    addArtistClicked() {
-        this.props.history.push(`/artists/-1`);
+    addUserClicked() {
+        this.props.history.push(`/users/-1`);
     }
 
     render() {
@@ -116,12 +117,12 @@ class ArtistListComponent extends React.Component {
         return (
             <div className="m-4">
                 <div className=" row my-2 mr-0">
-                    <h3>Художники</h3>
+                    <h3>Пользователи</h3>
                     <button className="btn btn-outline-secondary ml-auto"
-                            onClick={this.addArtistClicked}><FontAwesomeIcon icon={faPlus}/>{' '}-Добавить
+                            onClick={this.addUserClicked}><FontAwesomeIcon icon={faPlus}/>{' '}-Добавить
                     </button>
                     <button className="btn btn-outline-secondary ml-2"
-                            onClick={this.deleteArtistsClicked}><FontAwesomeIcon icon={faTrash}/>{' '}Удалить
+                            onClick={this.deleteUsersClicked}><FontAwesomeIcon icon={faTrash}/>{' '}Удалить
                     </button>
                 </div>
                 <div className="row my-2 mr-0">
@@ -134,9 +135,8 @@ class ArtistListComponent extends React.Component {
                     <table className="table table-sm">
                         <thead className="thead-light">
                         <tr>
-                            <th>Название</th>
-                            <th>Страна</th>
-                            <th>Век</th>
+                            <th>Логин</th>
+                            <th>E-mail</th>
                             <th>
                                 <div className="btn-toolbar pb-1">
                                     <div className="btn-group ml-auto">
@@ -147,17 +147,17 @@ class ArtistListComponent extends React.Component {
                         </tr>
                         </thead>
                         <tbody>
+                        {console.log(this.state.users)}
                         {
-                            this.state.artists && this.state.artists.map((artist, index) =>
-                                <tr key={artist.id}>
-                                    <td>{artist.name}</td>
-                                    <td>{artist.country.name}</td>
-                                    <td>{artist.century}</td>
+                            this.state.users && this.state.users.map((user, index) =>
+                                <tr key={user.id}>
+                                    <td>{user.login}</td>
+                                    <td>{user.email}</td>
                                     <td>
                                         <div className="btn-toolbar">
                                             <div className="btn-group ml-auto">
                                                 <button className="btn btn-outline-secondary btn-sm-btn-toolbar"
-                                                        onClick={() => this.updateArtistClicked(artist.id)}>
+                                                        onClick={() => this.updateUserClicked(user.id)}>
                                                     <FontAwesomeIcon icon={faEdit} fixedWidth/></button>
                                             </div>
                                             <div className="btn-group ml-2 mt-1">
@@ -187,4 +187,4 @@ class ArtistListComponent extends React.Component {
     }
 }
 
-export default ArtistListComponent;
+export default UsersListComponent;

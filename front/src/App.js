@@ -13,6 +13,12 @@ import CountryListComponent from "./components/CountryListComponent";
 import CountryComponent from "./components/CountryComponent";
 import ArtistListComponent from "./components/ArtistListComponent";
 import ArtistComponent from "./components/ArtistComponent";
+import MuseumListComponent from "./components/MuseumListComponent";
+import MuseumComponent from "./components/MuseumComponent";
+import PaintingListComponent from "./components/PaintingListComponent";
+import PaintingComponent from "./components/PaintingComponent";
+import UsersListComponent from "./components/UsersListComponent";
+import UserComponent from "./components/UserComponent";
 
 const AuthRoute = (props) => {
     let user = Utils.getUserName();
@@ -40,8 +46,13 @@ function App(props) {
                                 <AuthRoute path="/countries" exact component={CountryListComponent}/>
                                 <AuthRoute path="/countries/:id" component={CountryComponent}/>
                                 <AuthRoute path="/artists" exact component={ArtistListComponent}/>
-                                <AuthRoute path="/artists/:id" component={ArtistComponent}/>
-
+                                {/*<AuthRoute path="/artists/:id" component={ArtistComponent}/>*/}
+                                <AuthRoute path="/museums" exact component={MuseumListComponent}/>
+                                {/*<AuthRoute path="/museums/:id" component={MuseumComponent}/>*/}
+                                <AuthRoute path="/paintings" exact component={PaintingListComponent}/>
+                                {/*<AuthRoute path="/paintings/:id" component={PaintingComponent}/>*/}
+                                <AuthRoute path="/users" exact component={UsersListComponent}/>
+                                <AuthRoute path="/users/:id" component={UserComponent}/>
                             </Switch>
                         </div>
                     </div>

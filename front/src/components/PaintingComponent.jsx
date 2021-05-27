@@ -6,15 +6,15 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronLeft, faSave} from "@fortawesome/free-solid-svg-icons";
 import {alertActions} from "../utils/redux";
 import Alert from "react-bootstrap/Alert";
-
-class ArtistComponent extends Component {
+import {logger} from "redux-logger/src";
+class PaintingComponent extends Component {
     constructor(props) {
         super(props)
         this.state = {
             id: this.props.match.params.id,
             name: '',
-            century: '',
-            country: '',
+            author: '',
+            museum:'',
             hidden: false,
             alertShow: false,
             alertMessage: '',
@@ -25,57 +25,61 @@ class ArtistComponent extends Component {
     }
 
     handleChange({target}) {
-        console.log(target);
         this.setState({[target.name]: target.value});
     };
 
     onSubmit(event) {
+        console.log(event, 'event');
         event.preventDefault();
         event.stopPropagation();
-        let err = null;
+        let err = '';
         if (!this.state.name) {
-            err = "Имя художника должно быть указано"
+            err += "Название картины должно быть указано"
         }
-        if (!this.state.century) {
-            err = "Век художника должен быть указан"
+        if (!this.state.author) {
+            err += " Автор картины должна быть указана"
         }
-        if (!this.state.country) {
-            err = "Страна художника должна быть указана"
+        if (!this.state.museum) {
+            err += " Музей должен быть указан"
         }
         if (err) {
             this.props.dispatch(alertActions.error(err))
             this.setState({alertShow: true, alertMessage: err});
             return ;
         }
-        let artist = {id: this.state.id, name: this.state.name, country: this.state.country, century: this.state.century};
-        if (parseInt(artist.id) === -1) {
-            BackendService.createArtist(artist)
+        let painting = {id: this.state.id, name: this.state.name, author: this.state.author, museum: this.state.museum};
+        if (parseInt(painting.id) === -1) {
+            BackendService.createPainting(painting)
                 .then((res) => {
                     if (res.data.error) {
+                        console.log(res.data.error)
                         throw new Error(res.data.error);
                     }
-                    this.props.history.push('/artists')
+                    this.props.history.push('/paintings')
                 })
                 .catch((e) => {
                     this.props.dispatch(alertActions.error(e));
-                    this.setState({alertShow: true, alertMessage: e});
+                    this.setState({alertShow: true, alertMessage: 'Такая картина уже есть уже есть'});
                 })
         } else {
-            BackendService.updateArtist(artist)
-                .then(() => this.props.history.push('/artists'))
+            BackendService.updatePainting(painting)
+                .then(() => this.props.history.push('/paintings'))
                 .catch(() => {
                 })
         }
     }
 
     componentDidMount() {
-        if(parseInt(this.state.id) !== -1) {
-            BackendService.retrieveArtist(this.state.id)
-                .then((resp) => {
+        if (parseInt(this.state.id) !== -1) {
+            BackendService.retrievePainting(this.state.id)
+                .then(async (resp) => {
+                    console.log(resp.data, 'data')
+                    const info = await BackendService.retrieveMuseumsAndArtist(resp.data.artistid, resp.data.museumid);
+                    console.log(info, 'info');
                     this.setState({
                         name: resp.data.name,
-                        century: resp.data.century,
-                        country: resp.data.country.name,
+                        author: info.artist,
+                        museum: info.museum,
                     });
                 })
                 .catch(() => this.setState({hidden: true}));
@@ -90,7 +94,7 @@ class ArtistComponent extends Component {
                 {this.state.alertShow && <Alert variant={'danger'}>{this.state.alertMessage}</Alert>}
             <div className="m-4">
                 <div className="row my-2 mr-0">
-                    <h3>Художник</h3>
+                    <h3>Страна</h3>
                     <button
                         className="btn btn-outline-secondary ml-auto"
                         onClick={() => this.props.history.goBack()}><FontAwesomeIcon icon={faChevronLeft}/>{' '}Назад
@@ -98,10 +102,10 @@ class ArtistComponent extends Component {
                 </div>
                 <Form onSubmit={this.onSubmit}>
                     <Form.Group>
-                        <Form.Label>Имя</Form.Label>
+                        <Form.Label>Название</Form.Label>
                         <Form.Control
                             type="text"
-                            placeholder="Введите имя художника"
+                            placeholder="Введите название картины"
                             onChange={this.handleChange}
                             value={this.state.name}
                             name="name"
@@ -109,24 +113,24 @@ class ArtistComponent extends Component {
                         />
                     </Form.Group>
                     <Form.Group>
-                        <Form.Label>Век</Form.Label>
+                        <Form.Label>Автор</Form.Label>
                         <Form.Control
                             type="text"
-                            placeholder="Введите век"
+                            placeholder="Введите автор картины"
                             onChange={this.handleChange}
-                            value={this.state.century}
-                            name="century"
+                            value={this.state.author}
+                            name="author"
                             autoComplete="off"
                         />
                     </Form.Group>
                     <Form.Group>
-                        <Form.Label>Страна</Form.Label>
+                        <Form.Label>Музей</Form.Label>
                         <Form.Control
                             type="text"
-                            placeholder="Введите страну художника"
+                            placeholder="Введите музей картины"
                             onChange={this.handleChange}
-                            value={this.state.country}
-                            name="country"
+                            value={this.state.museum}
+                            name="museum"
                             autoComplete="off"
                         />
                     </Form.Group>
@@ -142,4 +146,4 @@ class ArtistComponent extends Component {
 
 }
 
-export default connect()(ArtistComponent);
+export default connect()(PaintingComponent);

@@ -17,6 +17,11 @@ class Utils {
         return user && user.login;
     }
 
+    getEmail() {
+        let user = JSON.parse(localStorage.getItem('user'));
+        return user.email;
+    }
+
 }
 
 export default new Utils()

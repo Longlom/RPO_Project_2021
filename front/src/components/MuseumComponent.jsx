@@ -6,15 +6,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronLeft, faSave} from "@fortawesome/free-solid-svg-icons";
 import {alertActions} from "../utils/redux";
 import Alert from "react-bootstrap/Alert";
-
-class ArtistComponent extends Component {
+class MuseumComponent extends Component {
     constructor(props) {
         super(props)
         this.state = {
             id: this.props.match.params.id,
             name: '',
-            century: '',
-            country: '',
+            location:'',
             hidden: false,
             alertShow: false,
             alertMessage: '',
@@ -25,44 +23,41 @@ class ArtistComponent extends Component {
     }
 
     handleChange({target}) {
-        console.log(target);
         this.setState({[target.name]: target.value});
     };
 
     onSubmit(event) {
+        console.log(event, 'event');
         event.preventDefault();
         event.stopPropagation();
-        let err = null;
+        let err = '';
         if (!this.state.name) {
-            err = "Имя художника должно быть указано"
+            err += "Название музея должно быть указано"
         }
-        if (!this.state.century) {
-            err = "Век художника должен быть указан"
-        }
-        if (!this.state.country) {
-            err = "Страна художника должна быть указана"
+        if (!this.state.location) {
+            err += " Локация музея должна быть указана"
         }
         if (err) {
             this.props.dispatch(alertActions.error(err))
             this.setState({alertShow: true, alertMessage: err});
             return ;
         }
-        let artist = {id: this.state.id, name: this.state.name, country: this.state.country, century: this.state.century};
-        if (parseInt(artist.id) === -1) {
-            BackendService.createArtist(artist)
+        let museum = {id: this.state.id, name: this.state.name, location: this.state.location};
+        if (parseInt(museum.id) === -1) {
+            BackendService.createMuseum(museum)
                 .then((res) => {
                     if (res.data.error) {
                         throw new Error(res.data.error);
                     }
-                    this.props.history.push('/artists')
+                    this.props.history.push('/museums')
                 })
                 .catch((e) => {
                     this.props.dispatch(alertActions.error(e));
-                    this.setState({alertShow: true, alertMessage: e});
+                    this.setState({alertShow: true, alertMessage: 'Такой музей уже есть'});
                 })
         } else {
-            BackendService.updateArtist(artist)
-                .then(() => this.props.history.push('/artists'))
+            BackendService.updateMuseum(museum)
+                .then(() => this.props.history.push('/museums'))
                 .catch(() => {
                 })
         }
@@ -70,12 +65,11 @@ class ArtistComponent extends Component {
 
     componentDidMount() {
         if(parseInt(this.state.id) !== -1) {
-            BackendService.retrieveArtist(this.state.id)
+            BackendService.retrieveMuseum(this.state.id)
                 .then((resp) => {
                     this.setState({
                         name: resp.data.name,
-                        century: resp.data.century,
-                        country: resp.data.country.name,
+                        location: resp.data.location,
                     });
                 })
                 .catch(() => this.setState({hidden: true}));
@@ -90,7 +84,7 @@ class ArtistComponent extends Component {
                 {this.state.alertShow && <Alert variant={'danger'}>{this.state.alertMessage}</Alert>}
             <div className="m-4">
                 <div className="row my-2 mr-0">
-                    <h3>Художник</h3>
+                    <h3>Страна</h3>
                     <button
                         className="btn btn-outline-secondary ml-auto"
                         onClick={() => this.props.history.goBack()}><FontAwesomeIcon icon={faChevronLeft}/>{' '}Назад
@@ -98,10 +92,10 @@ class ArtistComponent extends Component {
                 </div>
                 <Form onSubmit={this.onSubmit}>
                     <Form.Group>
-                        <Form.Label>Имя</Form.Label>
+                        <Form.Label>Название</Form.Label>
                         <Form.Control
                             type="text"
-                            placeholder="Введите имя художника"
+                            placeholder="Введите название музея"
                             onChange={this.handleChange}
                             value={this.state.name}
                             name="name"
@@ -109,24 +103,13 @@ class ArtistComponent extends Component {
                         />
                     </Form.Group>
                     <Form.Group>
-                        <Form.Label>Век</Form.Label>
+                        <Form.Label>Локация</Form.Label>
                         <Form.Control
                             type="text"
-                            placeholder="Введите век"
+                            placeholder="Введите локацию музея"
                             onChange={this.handleChange}
-                            value={this.state.century}
-                            name="century"
-                            autoComplete="off"
-                        />
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Страна</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="Введите страну художника"
-                            onChange={this.handleChange}
-                            value={this.state.country}
-                            name="country"
+                            value={this.state.location}
+                            name="location"
                             autoComplete="off"
                         />
                     </Form.Group>
@@ -142,4 +125,4 @@ class ArtistComponent extends Component {
 
 }
 
-export default connect()(ArtistComponent);
+export default connect()(MuseumComponent);

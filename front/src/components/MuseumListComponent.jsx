@@ -4,14 +4,15 @@ import {faEdit, faPlus, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Alert from "./Alert";
 import PaginationComponent from "./PaginationComponent";
+import {logger} from "redux-logger/src";
 
-class ArtistListComponent extends React.Component {
+class MuseumListComponent extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             message: undefined,
-            artists: [],
-            selected_artists: [],
+            museums: [],
+            selected_museums: [],
             show_alert: false,
             checkedItems: [],
             hidden: false,
@@ -20,24 +21,24 @@ class ArtistListComponent extends React.Component {
             totalCount: 0,
         }
 
-        this.refreshArtists = this.refreshArtists.bind(this)
-        this.updateArtistClicked = this.updateArtistClicked.bind(this)
-        this.addArtistClicked = this.addArtistClicked.bind(this)
+        this.refreshMuseums = this.refreshMuseums.bind(this)
+        this.updateMuseumClicked = this.updateMuseumClicked.bind(this)
+        this.addMuseumClicked = this.addMuseumClicked.bind(this)
         this.onDelete = this.onDelete.bind(this)
         this.closeAlert = this.closeAlert.bind(this)
         this.handleCheckChange = this.handleCheckChange.bind(this)
         this.handleGroupCheckChange = this.handleGroupCheckChange.bind(this)
         this.setChecked = this.setChecked.bind(this)
-        this.deleteArtistsClicked = this.deleteArtistsClicked.bind(this)
+        this.deleteMuseumsClicked = this.deleteMuseumsClicked.bind(this)
         this.onPageChanged = this.onPageChanged.bind(this)
     }
 
     onPageChanged(cp) {
-        this.refreshArtists( cp - 1 );
+        this.refreshMuseums( cp - 1 );
     }
 
     setChecked(v) {
-        let checkedCopy = Array(this.state.artists.length).fill(v);
+        let checkedCopy = Array(this.state.museums.length).fill(v);
         this.setState({checkedItems: checkedCopy});
     }
 
@@ -55,9 +56,9 @@ class ArtistListComponent extends React.Component {
         this.setChecked(isChecked);
     }
 
-    deleteArtistsClicked() {
+    deleteMuseumsClicked() {
         let x = [];
-        this.state.artists.map((t, idx) => {
+        this.state.museums.map((t, idx) => {
             if (this.state.checkedItems[idx]) {
                 x.push(t)
             }
@@ -66,17 +67,17 @@ class ArtistListComponent extends React.Component {
         if (x.length > 0) {
             let msg;
             if (x.length > 1) {
-                msg = "Пожалуйста подтвердите удаление " + x.length + "художников";
+                msg = "Пожалуйста подтвердите удаление " + x.length + "музеев";
             } else {
-                msg = "Пожалуйста подтвердите удаление художника " + x[0].name;
+                msg = "Пожалуйста подтвердите удаление музея " + x[0].name;
             }
-            this.setState({show_alert: true, selected_artists: x, message: msg});
+            this.setState({show_alert: true, selected_museums: x, message: msg});
         }
     }
 
     onDelete() {
-        BackendService.deleteArtists(this.state.selected_artists)
-            .then(() => this.refreshArtists(this.state.page))
+        BackendService.deleteMuseums(this.state.selected_museums)
+            .then(() => this.refreshMuseums(this.state.page))
             .catch(() => {
             });
     }
@@ -85,11 +86,13 @@ class ArtistListComponent extends React.Component {
         this.setState({show_alert: false})
     }
 
-    refreshArtists(cp) {
-        BackendService.retrieveAllArtists(cp, this.state.limit)
+    refreshMuseums(cp) {
+        console.log('cp', this.state.page);
+        BackendService.retrieveAllMuseums(cp, this.state.limit)
             .then(resp => {
+                console.log('RESP', resp);
                 this.setState({
-                        artists: resp.data.content, totalCount: resp.data.totalElements,
+                        museums: resp.data.content, totalCount: resp.data.totalElements,
                         page:cp, hidden: false });
             })
             .catch(() => {
@@ -99,15 +102,15 @@ class ArtistListComponent extends React.Component {
     }
 
     componentDidMount() {
-        this.refreshArtists(0);
+        this.refreshMuseums(0);
     }
 
-    updateArtistClicked(id) {
-        this.props.history.push(`/artists/${id}`)
+    updateMuseumClicked(id) {
+        this.props.history.push(`/museums/${id}`)
     }
 
-    addArtistClicked() {
-        this.props.history.push(`/artists/-1`);
+    addMuseumClicked() {
+        this.props.history.push(`/museums/-1`);
     }
 
     render() {
@@ -116,12 +119,12 @@ class ArtistListComponent extends React.Component {
         return (
             <div className="m-4">
                 <div className=" row my-2 mr-0">
-                    <h3>Художники</h3>
+                    <h3>Музеи</h3>
                     <button className="btn btn-outline-secondary ml-auto"
-                            onClick={this.addArtistClicked}><FontAwesomeIcon icon={faPlus}/>{' '}-Добавить
+                            onClick={this.addMuseumClicked}><FontAwesomeIcon icon={faPlus}/>{' '}-Добавить
                     </button>
                     <button className="btn btn-outline-secondary ml-2"
-                            onClick={this.deleteArtistsClicked}><FontAwesomeIcon icon={faTrash}/>{' '}Удалить
+                            onClick={this.deleteMuseumsClicked}><FontAwesomeIcon icon={faTrash}/>{' '}Удалить
                     </button>
                 </div>
                 <div className="row my-2 mr-0">
@@ -135,8 +138,7 @@ class ArtistListComponent extends React.Component {
                         <thead className="thead-light">
                         <tr>
                             <th>Название</th>
-                            <th>Страна</th>
-                            <th>Век</th>
+                            <th>Локация</th>
                             <th>
                                 <div className="btn-toolbar pb-1">
                                     <div className="btn-group ml-auto">
@@ -147,17 +149,15 @@ class ArtistListComponent extends React.Component {
                         </tr>
                         </thead>
                         <tbody>
-                        {
-                            this.state.artists && this.state.artists.map((artist, index) =>
-                                <tr key={artist.id}>
-                                    <td>{artist.name}</td>
-                                    <td>{artist.country.name}</td>
-                                    <td>{artist.century}</td>
+                        {this.state.museums && this.state.museums.map((museum, index) =>
+                                <tr key={museum.id}>
+                                    <td>{museum.name}</td>
+                                    <td>{museum.location}</td>
                                     <td>
                                         <div className="btn-toolbar">
                                             <div className="btn-group ml-auto">
                                                 <button className="btn btn-outline-secondary btn-sm-btn-toolbar"
-                                                        onClick={() => this.updateArtistClicked(artist.id)}>
+                                                        onClick={() => this.updateMuseumClicked(museum.id)}>
                                                     <FontAwesomeIcon icon={faEdit} fixedWidth/></button>
                                             </div>
                                             <div className="btn-group ml-2 mt-1">
@@ -187,4 +187,4 @@ class ArtistListComponent extends React.Component {
     }
 }
 
-export default ArtistListComponent;
+export default MuseumListComponent;
