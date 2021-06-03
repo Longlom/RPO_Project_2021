@@ -79,12 +79,13 @@ class UserComponent extends Component {
                     <Form.Group>
                         <Form.Label>Пароль</Form.Label>
                         <Form.Control
-                            type="text"
+                            type="password"
                             placeholder="Введите новой пароль"
                             onChange={this.handleChange}
                             value={this.state.password}
                             name="password"
                             autoComplete="off"
+
                         />
                     </Form.Group>
                     <button

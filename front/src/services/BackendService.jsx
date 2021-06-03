@@ -40,6 +40,7 @@ class BackendService {
     }
 
     updateArtist(artist) {
+        console.log(artist);
         return axios.put(`${API_URL}/artists/${artist.id}`, artist);
     }
 
